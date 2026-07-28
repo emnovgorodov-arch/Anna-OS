@@ -1,0 +1,47 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🤖 Ollama Anna",
+            "type": "shell",
+            "command": "ollama serve",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+
+        {
+            "label": "🚀 Anna Backend",
+            "type": "shell",
+            "command": "node src/server.js",
+            "options": {
+                "cwd": "${workspaceFolder}/backend"
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        },
+
+        {
+            "label": "⚛️ Anna Frontend",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        },
+
+        {
+            "label": "🔥 Запустить Anna OS",
+            "dependsOn": [
+                "🤖 Ollama Anna",
+                "🚀 Anna Backend",
+                "⚛️ Anna Frontend"
+            ],
+            "dependsOrder": "parallel",
+            "type": "shell",
+            "command": "echo Anna OS started",
+            "problemMatcher": []
+        }
+    ]
+}

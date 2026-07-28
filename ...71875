@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🚀 Backend Anna OS",
+            "type": "shell",
+            "command": "cd backend && node src/server.js",
+            "problemMatcher": []
+        },
+        {
+            "label": "⚛️ Frontend Anna OS",
+            "type": "shell",
+            "command": "cd frontend && npm run dev",
+            "problemMatcher": []
+        },
+        {
+            "label": "🤖 Ollama",
+            "type": "shell",
+            "command": "ollama serve",
+            "problemMatcher": []
+        }
+    ]
+}

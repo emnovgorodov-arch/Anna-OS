@@ -1,0 +1,35 @@
+{
+  "name": "anna-os",
+  "version": "1.0.0",
+  "description": "Этот репозитарий будет ядром операционной системы AI ассистента",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emnovgorodov-arch/Anna-OS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/emnovgorodov-arch/Anna-OS/issues"
+  },
+  "homepage": "https://github.com/emnovgorodov-arch/Anna-OS#readme",
+  "dependencies": {
+    "axios": "^1.18.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "ollama": "^0.6.3",
+    "openai": "^6.48.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
