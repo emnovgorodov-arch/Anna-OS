@@ -1,20 +1,26 @@
-const { askAI } = require("./ai");
+// ==========================================
+// Anna OS Core v0.1.2
+// ==========================================
 
-// Подключаем Self Developer напрямую
+const { askAI } = require("./ai");
+const { runBrain } = require("./brain/brain");
 const { selfDeveloper } = require("./developer/selfDeveloper");
+
 
 async function runAnna(task) {
 
     console.log("================================");
-    console.log("ORIGINAL:", task);
+    console.log("🧠 ANNA CORE");
+    console.log("TASK:", task);
     console.log("TYPE:", typeof task);
+    console.log("================================");
+
 
     const text = String(task)
         .toLowerCase()
         .trim();
 
-    console.log("NORMALIZED:", text);
-    console.log("================================");
+
 
     // =====================================
     // SELF DEVELOPER
@@ -23,46 +29,88 @@ async function runAnna(task) {
     if (
         text.includes("проверь себя") ||
         text.includes("диагностируй") ||
-        text.includes("исправь ошибки") ||
         text.includes("самодиагностика") ||
         text.includes("selfcheck")
     ) {
 
-        console.log("🧠 SELF DEVELOPER");
+        console.log("🛠 SELF DEVELOPER MODE");
+
 
         const result = await selfDeveloper();
 
-        return {
-            status: "developer",
-            answer:
-`🧠 Самодиагностика завершена
 
-Статус: ${result.analysis.status}
+        return {
+
+            status: "developer",
+
+            answer:
+`
+🧠 Самодиагностика Anna OS завершена
+
+Статус:
+${result.analysis.status}
 
 ${result.analysis.message}
 
-Исправлено файлов: ${result.fixes.length}
+Исправлено:
+${result.fixes.length} файлов
 `,
+
             report: result
+
         };
 
     }
+
+
+
+    // =====================================
+    // BRAIN BLOCK
+    // =====================================
+
+
+    console.log("🧠 BRAIN START");
+
+
+    const brainResult = await runBrain(task);
+
+
+
+    console.log("🧠 BRAIN RESULT:");
+    console.log(brainResult);
+
+
 
     // =====================================
     // OLLAMA
     // =====================================
 
-    console.log("➡ OLLAMA");
 
-    const answer = await askAI(task);
+    console.log("🤖 AI GENERATION");
+
+
+    const answer = await askAI(
+        brainResult.prompt
+    );
+
+
 
     return {
+
         status: "completed",
-        answer
+
+        answer,
+
+        brain: brainResult
+
     };
 
 }
 
+
+
 module.exports = {
+
     runAnna
+
 };

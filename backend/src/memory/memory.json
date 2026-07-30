@@ -1,0 +1,10 @@
+{
+    "agent": "Anna OS",
+    "version": "0.1.2",
+    "status": "active",
+    "history": [],
+    "knowledge": {
+        "project": "Anna OS",
+        "owner": "Evgeny"
+    }
+}

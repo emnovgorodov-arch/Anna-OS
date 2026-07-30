@@ -1,195 +1,80 @@
 // ==========================================
-// Anna OS AI Core
-// Ollama stable connector
+// Anna OS AI Core v0.1.2
+// Minimal Ollama Connector
 // ==========================================
 
 
-const http = require("http");
+const axios = require("axios");
 
 
-const MODEL = "qwen2.5:7b";
+const OLLAMA_URL =
+    "http://localhost:11434/api/generate";
 
 
-const SYSTEM_PROMPT = `
-Ты — Анна.
-
-Ты AI помощник проекта Anna OS.
-
-Пользователь — Евгений.
-
-Отвечай:
-- русский язык;
-- коротко;
-- понятно;
-- без внутренних рассуждений.
-`;
+const MODEL =
+    "qwen2.5:7b";
 
 
 
-function ollamaRequest(prompt){
+async function askAI(prompt) {
 
 
-    return new Promise((resolve,reject)=>{
+    console.log("================================");
+    console.log("🤖 AI CORE");
+    console.log("MODEL:", MODEL);
+    console.log("================================");
 
 
-        const body = JSON.stringify({
-
-            model: MODEL,
-
-            prompt,
-
-            stream:false,
-
-            options:{
-                temperature:0.3,
-                num_predict:80
-            }
-
-        });
+    try {
 
 
+        const response = await axios.post(
 
-        const req = http.request(
+            OLLAMA_URL,
 
             {
-                hostname:"127.0.0.1",
-                port:11434,
-                path:"/api/generate",
-                method:"POST",
 
-                headers:{
-                    "Content-Type":"application/json",
-                    "Content-Length":Buffer.byteLength(body)
-                },
+                model: MODEL,
 
-                timeout:900000
+                prompt: String(prompt),
+
+                stream: false,
+
+                options: {
+
+                    temperature: 0.3,
+
+                    num_predict: 100
+
+                }
 
             },
 
+            {
 
-            res=>{
-
-
-                let data="";
-
-
-                res.on(
-                    "data",
-                    chunk=>{
-                        data+=chunk;
-                    }
-                );
-
-
-                res.on(
-                    "end",
-                    ()=>{
-
-
-                        try{
-
-
-                            const json=JSON.parse(data);
-
-                            resolve(json.response);
-
-
-                        }
-
-                        catch(e){
-
-                            reject(e);
-
-                        }
-
-
-                    }
-                );
-
+                timeout: 300000
 
             }
 
         );
 
 
+        console.log("✅ OLLAMA RESPONSE");
 
-        req.on(
-            "timeout",
-            ()=>{
-                req.destroy();
 
-                reject(
-                    new Error(
-                        "Ollama timeout"
-                    )
-                );
-
-            }
-        );
+        return response.data.response;
 
 
 
-        req.on(
-            "error",
-            reject
-        );
+    } catch(error) {
 
 
-        req.write(body);
+        console.log("🚨 OLLAMA ERROR");
 
-        req.end();
-
-
-    });
+        console.log(error.message);
 
 
-}
-
-
-
-
-async function askAI(message){
-
-
-    try{
-
-
-        console.log("🤖 Anna → Ollama");
-
-
-        const answer = await ollamaRequest(
-
-`${SYSTEM_PROMPT}
-
-
-Пользователь:
-
-${message}
-
-
-Анна:
-`
-
-        );
-
-
-        console.log("✅ Ответ получен");
-
-
-        return answer;
-
-
-
-    }
-
-    catch(err){
-
-
-        console.error(err);
-
-
-        return "Ошибка AI: " + err.message;
-
+        return "Анна OS: ошибка связи с AI моделью.";
 
     }
 
@@ -198,6 +83,8 @@ ${message}
 
 
 
-module.exports={
+module.exports = {
+
     askAI
+
 };
