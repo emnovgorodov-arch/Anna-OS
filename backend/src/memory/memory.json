@@ -2,7 +2,14 @@
     "agent": "Anna OS",
     "version": "0.1.2",
     "status": "active",
-    "history": [],
+    "history": [
+        {
+            "event": {
+                "task": "тест памяти"
+            },
+            "time": "2026-08-03T15:27:01.531Z"
+        }
+    ],
     "knowledge": {
         "project": "Anna OS",
         "owner": "Evgeny"

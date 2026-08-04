@@ -1,23 +1,21 @@
 // ==========================================
-// Anna OS AI Core v0.1.2
-// Minimal Ollama Connector
+// Anna OS AI Core v0.1.3
+// Ollama Connector
 // ==========================================
 
+const http = require("http");
 
-const axios = require("axios");
+const OLLAMA_HOST = "127.0.0.1";
+const OLLAMA_PORT = 11434;
 
-
-const OLLAMA_URL =
-    "http://localhost:11434/api/generate";
-
-
-const MODEL =
-    "qwen2.5:7b";
+const MODEL = "qwen2.5:7b";
 
 
+// ==========================================
+// ASK AI
+// ==========================================
 
 async function askAI(prompt) {
-
 
     console.log("================================");
     console.log("🤖 AI CORE");
@@ -25,59 +23,165 @@ async function askAI(prompt) {
     console.log("================================");
 
 
-    try {
+    const data = JSON.stringify({
+
+        model: MODEL,
+
+        prompt: String(prompt),
+
+        stream: false,
+
+        options: {
+
+            temperature: 0.3,
+
+            num_predict: 100
+
+        }
+
+    });
 
 
-        const response = await axios.post(
 
-            OLLAMA_URL,
+    return new Promise((resolve) => {
+
+
+        const request = http.request(
 
             {
 
-                model: MODEL,
+                hostname: OLLAMA_HOST,
 
-                prompt: String(prompt),
+                port: OLLAMA_PORT,
 
-                stream: false,
+                path: "/api/generate",
 
-                options: {
+                method: "POST",
 
-                    temperature: 0.3,
+                headers: {
 
-                    num_predict: 100
+                    "Content-Type": "application/json",
+
+                    "Content-Length":
+                        Buffer.byteLength(data)
 
                 }
 
             },
 
-            {
 
-                timeout: 300000
+            (response) => {
+
+
+                let body = "";
+
+
+                response.on(
+                    "data",
+                    chunk => body += chunk
+                );
+
+
+                response.on(
+                    "end",
+                    () => {
+
+
+                        try {
+
+
+                            const result =
+                                JSON.parse(body);
+
+
+                            console.log(
+                                "✅ OLLAMA RESPONSE"
+                            );
+
+
+                            resolve(
+                                result.response
+                            );
+
+
+                        } catch(error) {
+
+
+                            console.log(
+                                "🚨 JSON ERROR"
+                            );
+
+
+                            resolve(
+                                "Anna OS: ошибка обработки ответа Ollama."
+                            );
+
+                        }
+
+
+                    }
+                );
+
 
             }
+
 
         );
 
 
-        console.log("✅ OLLAMA RESPONSE");
+        // Ошибка соединения
+
+        request.on(
+            "error",
+            error => {
+
+                console.log(
+                    "🚨 OLLAMA ERROR"
+                );
+
+                console.log(
+                    error.message
+                );
 
 
-        return response.data.response;
+                resolve(
+                    "Anna OS: ошибка связи с AI моделью."
+                );
+
+            }
+        );
 
 
+        // Большой таймаут для первой загрузки модели
 
-    } catch(error) {
+        request.setTimeout(
+            900000,
+            () => {
+
+                console.log(
+                    "🚨 OLLAMA TIMEOUT"
+                );
 
 
-        console.log("🚨 OLLAMA ERROR");
+                resolve(
+                    "Anna OS: AI модель отвечает слишком долго."
+                );
 
-        console.log(error.message);
+            }
+        );
 
 
-        return "Анна OS: ошибка связи с AI моделью.";
+        console.log(
+            "📡 REQUEST SENT"
+        );
 
-    }
 
+        request.write(data);
+
+        request.end();
+
+
+    });
 
 }
 

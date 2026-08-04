@@ -1,6 +1,6 @@
 // ==========================================
 // Anna OS Brain — Context
-// v0.1.2
+// version: "0.1.3"
 // ==========================================
 
 const { loadMemory } = require("../../memory/memory");
@@ -11,7 +11,7 @@ async function loadContext() {
 
         return {
             system: "Anna OS",
-            version: "0.1.2",
+            version: "0.1.3",
             agent: "Anna",
             memory
         };
@@ -22,7 +22,7 @@ async function loadContext() {
 
         return {
             system: "Anna OS",
-            version: "0.1.2",
+            version: "0.1.3",
             agent: "Anna",
             memory: {}
         };
