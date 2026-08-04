@@ -1,17 +1,9 @@
 {
-    "date": "2026-08-04T20:30:12.126Z",
-    "status": "ok",
-    "fixes": 0,
-    "summary": "Проект успешно проверен.",
-    "history": [
-        {
-            "event": {
-                "type": "developer_cycle",
-                "trigger": "manual",
-                "status": "ok",
-                "fixes": 0
-            },
-            "time": "2026-08-04T20:30:12.129Z"
-        }
-    ]
+    "event": {
+        "type": "self_developer_cycle",
+        "status": "ok",
+        "fixes": 0,
+        "errors": 0
+    },
+    "time": "2026-08-04T20:50:25.751Z"
 }
