@@ -1,6 +1,6 @@
 const { checkProject } = require("./checkProject");
 const { autoRepair } = require("./autoRepair");
-const { saveMemory } = require("../memory");
+const { saveMemory } = require("../../memory/memory");
 const { generateReport } = require("./report");
 
 const MAX_ATTEMPTS = 5;
