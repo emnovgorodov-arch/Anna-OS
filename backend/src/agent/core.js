@@ -1,19 +1,31 @@
 // ==========================================
-// Anna OS Core v0.1.2
+// Anna OS Core v0.1.4
+// Core + Brain + Memory Integration
 // ==========================================
+
 
 const { askAI } = require("./ai");
 const { runBrain } = require("./brain/brain");
 const { selfDeveloper } = require("./developer/selfDeveloper");
 
+const { remember } = require("../memory/memory");
+
+
+
+// ==========================================
+// RUN ANNA
+// ==========================================
+
 
 async function runAnna(task) {
+
 
     console.log("================================");
     console.log("🧠 ANNA CORE");
     console.log("TASK:", task);
     console.log("TYPE:", typeof task);
     console.log("================================");
+
 
 
     const text = String(task)
@@ -23,15 +35,19 @@ async function runAnna(task) {
 
 
     // =====================================
-    // SELF DEVELOPER
+    // SELF DEVELOPER MODE
     // =====================================
 
+
     if (
+
+        text.includes("selfcheck") ||
         text.includes("проверь себя") ||
         text.includes("диагностируй") ||
-        text.includes("самодиагностика") ||
-        text.includes("selfcheck")
+        text.includes("самодиагностика")
+
     ) {
+
 
         console.log("🛠 SELF DEVELOPER MODE");
 
@@ -39,9 +55,24 @@ async function runAnna(task) {
         const result = await selfDeveloper();
 
 
+
+        remember({
+
+            task,
+
+            mode: "self_developer",
+
+            result: result.analysis.status
+
+        });
+
+
+
         return {
 
+
             status: "developer",
+
 
             answer:
 `
@@ -52,15 +83,17 @@ ${result.analysis.status}
 
 ${result.analysis.message}
 
-Исправлено:
-${result.fixes.length} файлов
+Исправлено файлов:
+${result.fixes.length}
 `,
+
 
             report: result
 
         };
 
     }
+
 
 
 
@@ -72,17 +105,21 @@ ${result.fixes.length} файлов
     console.log("🧠 BRAIN START");
 
 
-    const brainResult = await runBrain(task);
+    const brainResult = await runBrain({
+
+        task
+
+    });
 
 
 
-    console.log("🧠 BRAIN RESULT:");
-    console.log(brainResult);
+    console.log("🧠 BRAIN RESULT");
+
 
 
 
     // =====================================
-    // OLLAMA
+    // AI GENERATION
     // =====================================
 
 
@@ -90,18 +127,54 @@ ${result.fixes.length} файлов
 
 
     const answer = await askAI(
+
         brainResult.prompt
+
     );
 
 
 
-    return {
 
-        status: "completed",
+    // =====================================
+    // MEMORY WRITE
+    // =====================================
+
+
+    remember({
+
+        task,
 
         answer,
 
+        mode:
+        brainResult.route.mode
+
+    });
+
+
+
+    console.log("💾 MEMORY SAVED");
+
+
+
+
+
+    // =====================================
+    // RESULT
+    // =====================================
+
+
+    return {
+
+
+        status: "completed",
+
+
+        answer,
+
+
         brain: brainResult
+
 
     };
 
@@ -109,8 +182,11 @@ ${result.fixes.length} файлов
 
 
 
+
 module.exports = {
 
+
     runAnna
+
 
 };
