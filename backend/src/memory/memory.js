@@ -41,13 +41,20 @@ function remember(event){
     const memory = loadMemory();
 
 
+    if (!memory.history) {
+
+        memory.history = [];
+
+    }
+
+
     memory.history.push({
 
         event,
 
         time:
-        new Date()
-        .toISOString()
+            new Date()
+            .toISOString()
 
     });
 
@@ -58,7 +65,6 @@ function remember(event){
     return memory;
 
 }
-
 
 
 module.exports = {
