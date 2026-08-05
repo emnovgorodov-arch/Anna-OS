@@ -1,0 +1,13 @@
+[
+    {
+        "id": "patch-1785878065246",
+        "created": "2026-08-04T21:14:25.246Z",
+        "status": "proposal",
+        "error": "memory.history undefined",
+        "component": "Memory Layer",
+        "reason": "Schema error",
+        "recommendation": "Initialize history",
+        "risk": "low",
+        "approved": false
+    }
+]
