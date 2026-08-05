@@ -43,5 +43,53 @@
         "confidence": 0.95,
         "risk": "low",
         "approved": false
+    },
+    {
+        "id": "patch-1785920710757",
+        "created": "2026-08-05T09:05:10.757Z",
+        "status": "proposal",
+        "error": "simulation memory.history undefined",
+        "component": "Memory Layer",
+        "reason": "Simulation test failure",
+        "recommendation": "Initialize memory history",
+        "confidence": 0.95,
+        "risk": "low",
+        "approved": false
+    },
+    {
+        "id": "patch-1785921087987",
+        "created": "2026-08-05T09:11:27.987Z",
+        "status": "proposal",
+        "error": "simulation memory.history undefined",
+        "component": "Memory Layer",
+        "reason": "Simulation test failure",
+        "recommendation": "Initialize memory history",
+        "confidence": 0.95,
+        "risk": "low",
+        "approved": false
+    },
+    {
+        "id": "patch-1785921262250",
+        "created": "2026-08-05T09:14:22.250Z",
+        "status": "proposal",
+        "error": "simulation memory.history undefined",
+        "component": "Memory Layer",
+        "reason": "Simulation test failure",
+        "recommendation": "Initialize memory history",
+        "confidence": 0.95,
+        "risk": "low",
+        "approved": false
+    },
+    {
+        "id": "patch-1785921394746",
+        "created": "2026-08-05T09:16:34.746Z",
+        "status": "proposal",
+        "error": "simulation memory.history undefined",
+        "component": "Memory Layer",
+        "reason": "Simulation test failure",
+        "recommendation": "Initialize memory history",
+        "confidence": 0.95,
+        "risk": "low",
+        "approved": false
     }
 ]
