@@ -1,0 +1,10 @@
+[
+    {
+        "patch": "patch-1785921394746",
+        "decision": "AUTO_APPROVE",
+        "confidence": 0.95,
+        "risk": "low",
+        "reason": "Low risk and high confidence",
+        "time": "2026-08-05T09:16:34.749Z"
+    }
+]
