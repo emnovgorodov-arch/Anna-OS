@@ -1,0 +1,34 @@
+# ==========================================
+# Anna OS Git Ignore
+# ==========================================
+
+
+# Backups
+backup/
+
+
+# Dependencies
+node_modules/
+
+
+# Environment
+.env
+
+
+# Logs
+logs/
+temp/
+
+
+# Build
+dist/
+build/
+
+
+# Editor
+.vscode/
+
+
+# OS
+.DS_Store
+Thumbs.db
