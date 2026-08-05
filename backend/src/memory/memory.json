@@ -5,16 +5,17 @@
         "fixes": 0,
         "errors": 0
     },
-    "time": "2026-08-05T07:23:46.738Z",
+    "time": "2026-08-05T07:57:08.349Z",
     "history": [
         {
             "event": {
                 "type": "developer_pipeline",
                 "trigger": "manual",
                 "status": "ok",
-                "proposals": 0
+                "proposals": 0,
+                "decisions": []
             },
-            "time": "2026-08-05T07:23:46.741Z"
+            "time": "2026-08-05T07:57:08.352Z"
         }
     ]
 }

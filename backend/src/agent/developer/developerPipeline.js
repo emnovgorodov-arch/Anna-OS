@@ -1,11 +1,13 @@
 // ==========================================
-// Anna OS Developer Pipeline v0.1.8
+// Anna OS Developer Pipeline v0.1.10
+// Decision Integration
 // ==========================================
 
 
 const { selfDeveloper } = require("./selfDeveloper");
 const { analyzeError } = require("./errorAnalyzer");
 const { createPatchProposal } = require("./patchEngine");
+const { decidePatch } = require("./decisionEngine");
 const { remember } = require("../../memory/memory");
 
 
@@ -30,8 +32,14 @@ async function developerPipeline(trigger = "manual") {
     try {
 
 
-        const result = await selfDeveloper();
+        const result =
+            await selfDeveloper();
 
+
+
+        // ==================================
+        // ANALYSIS CHECK
+        // ==================================
 
 
         if (
@@ -40,6 +48,7 @@ async function developerPipeline(trigger = "manual") {
 
 
             const error = {
+
 
                 error:
                     result.analysis.message,
@@ -54,7 +63,16 @@ async function developerPipeline(trigger = "manual") {
 
 
                 recommendation:
-                    "Review generated report"
+                    "Review generated report",
+
+
+                risk:
+                    "low",
+
+
+                confidence:
+                    0.8
+
 
             };
 
@@ -72,11 +90,30 @@ async function developerPipeline(trigger = "manual") {
 
 
 
-            proposals.push(patch);
+            const decision =
+                decidePatch(
+                    patch
+                );
+
+
+
+            proposals.push({
+
+                patch,
+
+                decision
+
+            });
+
 
 
         }
 
+
+
+        // ==================================
+        // MEMORY SAVE
+        // ==================================
 
 
         remember({
@@ -94,7 +131,13 @@ async function developerPipeline(trigger = "manual") {
 
 
             proposals:
-                proposals.length
+                proposals.length,
+
+
+            decisions:
+                proposals.map(
+                    p => p.decision.decision
+                )
 
 
         });
@@ -106,6 +149,10 @@ async function developerPipeline(trigger = "manual") {
 
             pipeline:
                 "Anna OS Developer Pipeline",
+
+
+            version:
+                "0.1.10",
 
 
             trigger,
@@ -130,15 +177,26 @@ async function developerPipeline(trigger = "manual") {
     catch(error){
 
 
+
         const analysis =
             analyzeError({
+
 
                 error:
                     error.message,
 
 
                 component:
-                    "Developer Pipeline"
+                    "Developer Pipeline",
+
+
+                reason:
+                    "Pipeline execution error",
+
+
+                recommendation:
+                    "Review developer pipeline"
+
 
             });
 
@@ -149,6 +207,10 @@ async function developerPipeline(trigger = "manual") {
 
             pipeline:
                 "Anna OS Developer Pipeline",
+
+
+            version:
+                "0.1.10",
 
 
             status:
@@ -169,6 +231,7 @@ async function developerPipeline(trigger = "manual") {
 
 
 module.exports = {
+
 
     developerPipeline
 
