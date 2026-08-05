@@ -1,29 +1,41 @@
 // ==========================================
-// Anna OS Developer Pipeline v0.1.17
-// Decision + Learning Report Integration
+// Anna OS Developer Pipeline v0.1.19
+// Decision + Learning + Memory Intelligence
 // ==========================================
 
 
 const { selfDeveloper } =
     require("./selfDeveloper");
 
+
 const { analyzeError } =
     require("./errorAnalyzer");
+
 
 const { createPatchProposal } =
     require("./patchEngine");
 
+
 const { decidePatch } =
     require("./decisionEngine");
+
 
 const { getDecisionStats } =
     require("./decisionStats");
 
+
 const { generateLearningReport } =
     require("./learningReport");
 
+
+const { analyzeMemory } =
+    require("./memoryAnalyzer");
+
+
 const { remember } =
     require("../../memory/memory");
+
+
 
 
 
@@ -53,8 +65,11 @@ async function developerPipeline(
     try {
 
 
+
         const result =
             await selfDeveloper();
+
+
 
 
 
@@ -70,27 +85,34 @@ async function developerPipeline(
         ) {
 
 
+
             const error = {
+
 
 
                 error:
                     result.analysis.message,
 
 
+
                 component:
                     "Developer Cycle",
+
 
 
                 reason:
                     "Self diagnostic warning",
 
 
+
                 recommendation:
                     "Review generated report",
 
 
+
                 risk:
                     "low",
+
 
 
                 confidence:
@@ -101,8 +123,11 @@ async function developerPipeline(
 
 
 
+
             const analysis =
-                analyzeError(error);
+                analyzeError(
+                    error
+                );
 
 
 
@@ -122,14 +147,20 @@ async function developerPipeline(
 
             proposals.push({
 
+
                 patch,
 
+
                 decision
+
 
             });
 
 
+
         }
+
+
 
 
 
@@ -142,6 +173,8 @@ async function developerPipeline(
 
         const learning =
             getDecisionStats();
+
+
 
 
 
@@ -161,12 +194,39 @@ async function developerPipeline(
 
 
 
+
+
         // ==================================
-        // MEMORY
+        // MEMORY INTELLIGENCE
+        // ==================================
+
+
+        const memoryAnalysis =
+            analyzeMemory();
+
+
+
+
+
+        console.log(
+            "🔍 Memory analysis completed"
+        );
+
+
+
+
+
+
+
+
+
+        // ==================================
+        // MEMORY SAVE
         // ==================================
 
 
         remember({
+
 
 
             type:
@@ -193,10 +253,18 @@ async function developerPipeline(
 
 
             learningReport:
-                learningReport.version
+                learningReport.version,
+
+
+
+            memoryAnalyzer:
+                memoryAnalysis.version
+
 
 
         });
+
+
 
 
 
@@ -212,13 +280,14 @@ async function developerPipeline(
         return {
 
 
+
             pipeline:
                 "Anna OS Developer Pipeline",
 
 
 
             version:
-                "0.1.17",
+                "0.1.19",
 
 
 
@@ -239,6 +308,10 @@ async function developerPipeline(
 
 
 
+            memoryAnalysis,
+
+
+
             proposals,
 
 
@@ -246,15 +319,18 @@ async function developerPipeline(
             result
 
 
+
         };
+
+
 
 
 
     }
 
-
-
     catch(error){
+
+
 
 
 
@@ -262,20 +338,25 @@ async function developerPipeline(
             analyzeError({
 
 
+
                 error:
                     error.message,
+
 
 
                 component:
                     "Developer Pipeline",
 
 
+
                 reason:
                     "Pipeline execution error",
 
 
+
                 recommendation:
                     "Review developer pipeline"
+
 
 
             });
@@ -284,7 +365,9 @@ async function developerPipeline(
 
 
 
+
         return {
+
 
 
             pipeline:
@@ -293,7 +376,7 @@ async function developerPipeline(
 
 
             version:
-                "0.1.17",
+                "0.1.19",
 
 
 
@@ -305,10 +388,13 @@ async function developerPipeline(
             analysis
 
 
+
         };
 
 
+
     }
+
 
 
 }
@@ -317,9 +403,14 @@ async function developerPipeline(
 
 
 
+
+
 module.exports = {
 
 
+
     developerPipeline
+
+
 
 };
