@@ -1,5 +1,6 @@
 // ==========================================
-// Anna OS Patch Proposal Engine v0.1.7
+// Anna OS Patch Proposal Engine v0.1.12
+// Confidence Layer
 // ==========================================
 
 const fs = require("fs");
@@ -13,7 +14,12 @@ const historyFile = path.join(
 
 
 
+// ==========================================
+// LOAD HISTORY
+// ==========================================
+
 function loadPatchHistory() {
+
 
     if (!fs.existsSync(historyFile)) {
 
@@ -33,7 +39,12 @@ function loadPatchHistory() {
 
 
 
+// ==========================================
+// SAVE HISTORY
+// ==========================================
+
 function savePatchHistory(data) {
+
 
     fs.writeFileSync(
         historyFile,
@@ -48,13 +59,19 @@ function savePatchHistory(data) {
 
 
 
+// ==========================================
+// CREATE PATCH PROPOSAL
+// ==========================================
+
 function createPatchProposal(errorAnalysis) {
 
 
     const proposal = {
 
+
         id:
             "patch-" + Date.now(),
+
 
 
         created:
@@ -62,32 +79,46 @@ function createPatchProposal(errorAnalysis) {
             .toISOString(),
 
 
+
         status:
             "proposal",
+
 
 
         error:
             errorAnalysis.error || "unknown",
 
 
+
         component:
             errorAnalysis.component || "unknown",
+
 
 
         reason:
             errorAnalysis.reason || "unknown",
 
 
+
         recommendation:
             errorAnalysis.recommendation || "none",
 
 
+
+        // новое поле
+        confidence:
+            errorAnalysis.confidence ?? 0,
+
+
+
         risk:
-            "low",
+            errorAnalysis.risk || "low",
+
 
 
         approved:
             false
+
 
     };
 
@@ -97,10 +128,16 @@ function createPatchProposal(errorAnalysis) {
         loadPatchHistory();
 
 
-    history.push(proposal);
+
+    history.push(
+        proposal
+    );
 
 
-    savePatchHistory(history);
+
+    savePatchHistory(
+        history
+    );
 
 
 
@@ -111,6 +148,7 @@ function createPatchProposal(errorAnalysis) {
 
 
 module.exports = {
+
 
     createPatchProposal,
 

@@ -9,5 +9,27 @@
         "recommendation": "Initialize history",
         "risk": "low",
         "approved": false
+    },
+    {
+        "id": "patch-1785917156835",
+        "created": "2026-08-05T08:05:56.835Z",
+        "status": "proposal",
+        "error": "[object Object]",
+        "component": "Unknown",
+        "reason": "Unknown error",
+        "recommendation": "Check system logs",
+        "risk": "low",
+        "approved": false
+    },
+    {
+        "id": "patch-1785917802226",
+        "created": "2026-08-05T08:16:42.226Z",
+        "status": "proposal",
+        "error": "simulation memory.history undefined",
+        "component": "Memory Layer",
+        "reason": "Simulation test failure",
+        "recommendation": "Initialize memory history",
+        "risk": "low",
+        "approved": false
     }
 ]
