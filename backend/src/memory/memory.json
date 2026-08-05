@@ -5,7 +5,7 @@
         "fixes": 0,
         "errors": 0
     },
-    "time": "2026-08-05T07:57:08.349Z",
+    "time": "2026-08-05T11:07:30.360Z",
     "history": [
         {
             "event": {
@@ -13,9 +13,20 @@
                 "trigger": "manual",
                 "status": "ok",
                 "proposals": 0,
-                "decisions": []
+                "learning": {
+                    "totalDecisions": 1,
+                    "autoApprove": 1,
+                    "waitApproval": 0,
+                    "approvalRate": "100%",
+                    "averageConfidence": "0.95",
+                    "risks": {
+                        "low": 1,
+                        "medium": 0,
+                        "high": 0
+                    }
+                }
             },
-            "time": "2026-08-05T07:57:08.352Z"
+            "time": "2026-08-05T11:07:30.362Z"
         }
     ]
 }

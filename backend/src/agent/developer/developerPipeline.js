@@ -1,14 +1,27 @@
 // ==========================================
-// Anna OS Developer Pipeline v0.1.10
-// Decision Integration
+// Anna OS Developer Pipeline v0.1.15
+// Decision + Learning Integration
 // ==========================================
 
 
-const { selfDeveloper } = require("./selfDeveloper");
-const { analyzeError } = require("./errorAnalyzer");
-const { createPatchProposal } = require("./patchEngine");
-const { decidePatch } = require("./decisionEngine");
-const { remember } = require("../../memory/memory");
+const { selfDeveloper } =
+    require("./selfDeveloper");
+
+const { analyzeError } =
+    require("./errorAnalyzer");
+
+const { createPatchProposal } =
+    require("./patchEngine");
+
+const { decidePatch } =
+    require("./decisionEngine");
+
+const { getDecisionStats } =
+    require("./decisionStats");
+
+const { remember } =
+    require("../../memory/memory");
+
 
 
 
@@ -17,7 +30,9 @@ const { remember } = require("../../memory/memory");
 // ==========================================
 
 
-async function developerPipeline(trigger = "manual") {
+async function developerPipeline(
+    trigger = "manual"
+) {
 
 
     console.log("================================");
@@ -26,7 +41,9 @@ async function developerPipeline(trigger = "manual") {
     console.log("================================");
 
 
+
     let proposals = [];
+
 
 
     try {
@@ -37,8 +54,10 @@ async function developerPipeline(trigger = "manual") {
 
 
 
+
+
         // ==================================
-        // ANALYSIS CHECK
+        // ANALYSIS
         // ==================================
 
 
@@ -106,13 +125,34 @@ async function developerPipeline(trigger = "manual") {
             });
 
 
-
         }
 
 
 
+
+
         // ==================================
-        // MEMORY SAVE
+        // LEARNING STATS
+        // ==================================
+
+
+        const learning =
+            getDecisionStats();
+
+
+
+
+
+        console.log(
+            "🧠 Learning stats loaded"
+        );
+
+
+
+
+
+        // ==================================
+        // MEMORY
         // ==================================
 
 
@@ -134,13 +174,14 @@ async function developerPipeline(trigger = "manual") {
                 proposals.length,
 
 
-            decisions:
-                proposals.map(
-                    p => p.decision.decision
-                )
+            learning
 
 
         });
+
+
+
+
 
 
 
@@ -151,18 +192,27 @@ async function developerPipeline(trigger = "manual") {
                 "Anna OS Developer Pipeline",
 
 
+
             version:
-                "0.1.10",
+                "0.1.15",
+
 
 
             trigger,
+
 
 
             status:
                 "completed",
 
 
+
+            learning,
+
+
+
             proposals,
+
 
 
             result
@@ -171,7 +221,9 @@ async function developerPipeline(trigger = "manual") {
         };
 
 
+
     }
+
 
 
     catch(error){
@@ -202,6 +254,8 @@ async function developerPipeline(trigger = "manual") {
 
 
 
+
+
         return {
 
 
@@ -209,12 +263,15 @@ async function developerPipeline(trigger = "manual") {
                 "Anna OS Developer Pipeline",
 
 
+
             version:
-                "0.1.10",
+                "0.1.15",
+
 
 
             status:
                 "error",
+
 
 
             analysis
@@ -227,6 +284,7 @@ async function developerPipeline(trigger = "manual") {
 
 
 }
+
 
 
 
