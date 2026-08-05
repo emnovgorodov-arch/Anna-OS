@@ -1,6 +1,6 @@
 // ==========================================
-// Anna OS Developer Pipeline v0.1.15
-// Decision + Learning Integration
+// Anna OS Developer Pipeline v0.1.17
+// Decision + Learning Report Integration
 // ==========================================
 
 
@@ -19,8 +19,12 @@ const { decidePatch } =
 const { getDecisionStats } =
     require("./decisionStats");
 
+const { generateLearningReport } =
+    require("./learningReport");
+
 const { remember } =
     require("../../memory/memory");
+
 
 
 
@@ -57,7 +61,7 @@ async function developerPipeline(
 
 
         // ==================================
-        // ANALYSIS
+        // ERROR ANALYSIS
         // ==================================
 
 
@@ -132,7 +136,7 @@ async function developerPipeline(
 
 
         // ==================================
-        // LEARNING STATS
+        // LEARNING SYSTEM
         // ==================================
 
 
@@ -141,11 +145,17 @@ async function developerPipeline(
 
 
 
+        const learningReport =
+            generateLearningReport();
+
+
+
 
 
         console.log(
-            "🧠 Learning stats loaded"
+            "🧠 Learning report generated"
         );
+
 
 
 
@@ -163,18 +173,27 @@ async function developerPipeline(
                 "developer_pipeline",
 
 
+
             trigger,
+
 
 
             status:
                 result.analysis.status,
 
 
+
             proposals:
                 proposals.length,
 
 
-            learning
+
+            learning,
+
+
+
+            learningReport:
+                learningReport.version
 
 
         });
@@ -183,6 +202,11 @@ async function developerPipeline(
 
 
 
+
+
+        // ==================================
+        // RETURN
+        // ==================================
 
 
         return {
@@ -194,7 +218,7 @@ async function developerPipeline(
 
 
             version:
-                "0.1.15",
+                "0.1.17",
 
 
 
@@ -208,6 +232,10 @@ async function developerPipeline(
 
 
             learning,
+
+
+
+            learningReport,
 
 
 
@@ -265,7 +293,7 @@ async function developerPipeline(
 
 
             version:
-                "0.1.15",
+                "0.1.17",
 
 
 
@@ -284,6 +312,7 @@ async function developerPipeline(
 
 
 }
+
 
 
 
