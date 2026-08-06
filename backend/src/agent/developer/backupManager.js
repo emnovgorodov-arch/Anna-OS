@@ -1,5 +1,8 @@
 const fs = require("fs");
 const path = require("path");
+const {
+    validateBackup
+} = require("./backupValidator");
 
 // ==========================================
 // Anna OS Backup Manager v0.1.26
@@ -243,7 +246,7 @@ function rotateBackups(
         } catch (error) {
 
             console.log(
-                "Не удалось удалить backup:",
+                "пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ backup:",
                 backup,
                 error.message
             );
@@ -337,18 +340,24 @@ function createBackup(
         rotateBackups(
             maxBackups
         );
+ const integrity =
+    validateBackup(
+        backupName
+    );      
 
 
     return {
 
-        status:
-            "completed",
+    status:
+        "completed",
 
-        metadata,
+    metadata,
 
-        rotation
+    rotation,
 
-    };
+    integrity
+
+};
 
 }
 
