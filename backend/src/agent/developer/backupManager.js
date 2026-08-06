@@ -1,256 +1,178 @@
-// ==========================================
-// Anna OS Backup Manager v0.1.22
-// Safe Incremental Snapshot System
-// ==========================================
-//
-// Features:
-// - Full project snapshot
-// - Exclude heavy folders
-// - Prevent recursive backup
-// - Keep last 5 backups
-// - Metadata tracking
-// - Lock protection
-// ==========================================
-
-
 const fs = require("fs");
 const path = require("path");
 
-
-
 // ==========================================
-// PATHS
+// Anna OS Backup Manager v0.1.26
+// Safe Full Project Snapshot + Rotation
 // ==========================================
 
 const projectRoot =
-    path.join(
-        __dirname,
-        "../../../.."
-    );
-
+    path.join(__dirname, "../../../..");
 
 const backupRoot =
-    path.join(
-        projectRoot,
-        "backup"
-    );
-
-
-const lockFile =
-    path.join(
-        backupRoot,
-        "backup.lock"
-    );
-
-
-
-// ==========================================
-// SETTINGS
-// ==========================================
+    path.join(projectRoot, "backup");
 
 const MAX_BACKUPS = 5;
 
-
-const EXCLUDED = [
-
+const EXCLUDED = new Set([
     "backup",
     "node_modules",
     ".git",
     "logs",
     "temp"
-
-];
-
+]);
 
 
 // ==========================================
-// ENSURE BACKUP FOLDER
+// ENSURE BACKUP DIRECTORY
 // ==========================================
 
-function ensureBackupFolder(){
+function ensureBackupFolder() {
 
-
-    if(
-        !fs.existsSync(
-            backupRoot
-        )
-    ){
+    if (!fs.existsSync(backupRoot)) {
 
         fs.mkdirSync(
             backupRoot,
-            {
-                recursive:true
+            { recursive: true }
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// LIST BACKUPS
+// ==========================================
+
+function listBackups() {
+
+    if (!fs.existsSync(backupRoot)) {
+        return [];
+    }
+
+    return fs.readdirSync(backupRoot)
+        .filter(name => name.startsWith("backup-"))
+        .filter(name => {
+
+            const fullPath =
+                path.join(
+                    backupRoot,
+                    name
+                );
+
+            try {
+
+                return fs.statSync(
+                    fullPath
+                ).isDirectory();
+
+            } catch {
+
+                return false;
+
             }
-        );
 
-    }
-
-}
-
-
-
-// ==========================================
-// LOCK
-// ==========================================
-
-function createLock(){
-
-
-    if(
-        fs.existsSync(lockFile)
-    ){
-
-        throw new Error(
-            "Backup already running"
-        );
-
-    }
-
-
-    fs.writeFileSync(
-        lockFile,
-        new Date()
-        .toISOString()
-    );
-
+        })
+        .sort();
 
 }
 
 
-
-function removeLock(){
-
-
-    if(
-        fs.existsSync(lockFile)
-    ){
-
-        fs.unlinkSync(
-            lockFile
-        );
-
-    }
-
-
-}
-
-
-
 // ==========================================
-// VERSION
+// GENERATE NEXT BACKUP NUMBER
 // ==========================================
 
-function generateVersion(){
-
+function generateBackupName() {
 
     const backups =
-        fs.existsSync(backupRoot)
-        ?
-        fs.readdirSync(
-            backupRoot
-        )
-        .filter(
-            x =>
-            x.startsWith("backup-")
-        )
-        :
-        [];
+        listBackups();
 
+    let maxNumber = 0;
 
+    for (const backup of backups) {
+
+        const match =
+            backup.match(/^backup-(\d+)$/);
+
+        if (match) {
+
+            const number =
+                parseInt(
+                    match[1],
+                    10
+                );
+
+            if (number > maxNumber) {
+                maxNumber = number;
+            }
+
+        }
+
+    }
 
     return (
         "backup-" +
-        String(
-            backups.length + 1
-        )
-        .padStart(3,"0")
+        String(maxNumber + 1)
+            .padStart(3, "0")
     );
-
 
 }
 
 
-
 // ==========================================
-// COPY
+// COPY DIRECTORY
 // ==========================================
 
 function copyFolder(
     source,
     destination
-){
+) {
 
-
-    if(
-        !fs.existsSync(destination)
-    ){
+    if (!fs.existsSync(destination)) {
 
         fs.mkdirSync(
             destination,
-            {
-                recursive:true
-            }
+            { recursive: true }
         );
 
     }
 
-
-
-    const items =
+    const entries =
         fs.readdirSync(
-            source
+            source,
+            { withFileTypes: true }
         );
 
+    for (const entry of entries) {
 
+        const name =
+            entry.name;
 
-    for(
-        const item of items
-    ){
-
-
-        if(
-            EXCLUDED.includes(item)
-        ){
-
+        if (EXCLUDED.has(name)) {
             continue;
-
         }
-
-
 
         const src =
             path.join(
                 source,
-                item
+                name
             );
-
 
         const dest =
             path.join(
                 destination,
-                item
+                name
             );
 
-
-
-        const stat =
-            fs.statSync(
-                src
-            );
-
-
-
-        if(
-            stat.isDirectory()
-        ){
+        if (entry.isDirectory()) {
 
             copyFolder(
                 src,
                 dest
             );
 
-        }
-        else{
+        } else {
 
             fs.copyFileSync(
                 src,
@@ -259,186 +181,220 @@ function copyFolder(
 
         }
 
-
     }
-
 
 }
 
 
-
 // ==========================================
-// CLEAN OLD BACKUPS
+// ROTATE BACKUPS
 // ==========================================
 
-function cleanupBackups(){
+function rotateBackups(
+    maxBackups = MAX_BACKUPS
+) {
 
+    const backups =
+        listBackups();
 
-    let backups =
-        fs.readdirSync(
-            backupRoot
-        )
-        .filter(
-            x =>
-            x.startsWith("backup-")
-        )
-        .sort();
+    const excess =
+        backups.length -
+        maxBackups;
 
+    if (excess <= 0) {
 
+        return {
+            removed: [],
+            remaining: backups
+        };
 
-    while(
-        backups.length > MAX_BACKUPS
-    ){
+    }
 
-
-        const old =
-            backups.shift();
-
-
-
-        fs.rmSync(
-
-            path.join(
-                backupRoot,
-                old
-            ),
-
-            {
-                recursive:true,
-                force:true
-            }
-
+    const toRemove =
+        backups.slice(
+            0,
+            excess
         );
 
+    const removed = [];
+
+    for (const backup of toRemove) {
+
+        const target =
+            path.join(
+                backupRoot,
+                backup
+            );
+
+        try {
+
+            fs.rmSync(
+                target,
+                {
+                    recursive: true,
+                    force: true
+                }
+            );
+
+            removed.push(
+                backup
+            );
+
+        } catch (error) {
+
+            console.log(
+                "Не удалось удалить backup:",
+                backup,
+                error.message
+            );
+
+        }
 
     }
 
+    return {
+
+        removed,
+
+        remaining:
+            listBackups()
+
+    };
 
 }
-
 
 
 // ==========================================
 // CREATE BACKUP
 // ==========================================
 
-function createBackup(){
-
+function createBackup(
+    maxBackups = MAX_BACKUPS
+) {
 
     ensureBackupFolder();
 
+    const backupName =
+        generateBackupName();
 
-    createLock();
-
-
-    try{
-
-
-        const version =
-            generateVersion();
-
-
-
-        const destination =
-            path.join(
-                backupRoot,
-                version
-            );
-
-
-
-        copyFolder(
-            projectRoot,
-            destination
+    const destination =
+        path.join(
+            backupRoot,
+            backupName
         );
 
+    copyFolder(
+        projectRoot,
+        destination
+    );
 
+    const metadata = {
 
-        const metadata = {
+        system:
+            "Anna OS Backup Manager",
 
+        version:
+            "0.1.26",
 
-            system:
-                "Anna OS Backup Manager",
-
-
-            version:
-                "0.1.22",
-
-
-            created:
-                new Date()
+        created:
+            new Date()
                 .toISOString(),
 
+        backup:
+            backupName,
 
-            backup:
-                version,
+        source:
+            projectRoot,
+
+        excluded:
+            Array.from(EXCLUDED),
+
+        rotation:
+            {
+                maxBackups
+            }
+
+    };
 
 
-            source:
-                projectRoot,
+    fs.writeFileSync(
+
+        path.join(
+            destination,
+            "backupMetadata.json"
+        ),
+
+        JSON.stringify(
+            metadata,
+            null,
+            4
+        )
+
+    );
 
 
-            excluded:
-                EXCLUDED
-
-
-        };
-
-
-
-        fs.writeFileSync(
-
-            path.join(
-                destination,
-                "backupMetadata.json"
-            ),
-
-            JSON.stringify(
-                metadata,
-                null,
-                4
-            )
-
+    const rotation =
+        rotateBackups(
+            maxBackups
         );
 
 
+    return {
 
-        cleanupBackups();
+        status:
+            "completed",
 
+        metadata,
 
+        rotation
 
-        return {
-
-
-            status:
-                "completed",
-
-
-            metadata
-
-
-        };
-
-
-    }
-
-    finally{
-
-
-        removeLock();
-
-
-    }
-
+    };
 
 }
 
 
+// ==========================================
+// STATUS
+// ==========================================
 
+function getBackupStatus() {
+
+    const backups =
+        listBackups();
+
+    return {
+
+        manager:
+            "Anna OS Backup Manager",
+
+        version:
+            "0.1.26",
+
+        maxBackups:
+            MAX_BACKUPS,
+
+        totalBackups:
+            backups.length,
+
+        backups
+
+    };
+
+}
+
+
+// ==========================================
+// EXPORT
+// ==========================================
 
 module.exports = {
 
+    createBackup,
 
-    createBackup
+    listBackups,
+
+    rotateBackups,
+
+    getBackupStatus
 
 };
