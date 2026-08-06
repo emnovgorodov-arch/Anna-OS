@@ -1,8 +1,10 @@
 /**
  * ==========================================
- * Anna OS Developer Pipeline v0.1.27
+ * Anna OS Developer Pipeline v0.1.32
  * Decision + Learning + Memory Intelligence
  * + Safe Backup Integration
+ * + Backup Validation
+ * + Recovery Intelligence
  * ==========================================
  */
 
@@ -33,6 +35,12 @@ const { remember } =
 const { createBackup } =
     require("./backupManager");
 
+const { validateBackup } =
+    require("./backupValidator");
+
+const { getRecoveryStatus } =
+    require("./recoveryManager");
+
 
 // ==========================================
 // DEVELOPMENT PIPELINE
@@ -50,6 +58,10 @@ async function developerPipeline(
     let proposals = [];
 
     let backup = null;
+
+    let backupValidation = null;
+
+    let recovery = null;
 
 
     try {
@@ -204,6 +216,22 @@ async function developerPipeline(
                     backup.metadata.backup
                 );
 
+
+                // ==================================
+                // BACKUP VALIDATION
+                // ==================================
+
+                backupValidation =
+                    validateBackup(
+                        backup.metadata.backup
+                    );
+
+
+                console.log(
+                    "?? Backup validation:",
+                    backupValidation.status
+                );
+
             }
             catch (backupError) {
 
@@ -223,13 +251,37 @@ async function developerPipeline(
 
                 };
 
+
+                backupValidation = {
+
+                    status:
+                        "not-run",
+
+                    reason:
+                        "Backup creation failed"
+
+                };
+
             }
 
         }
 
 
         // ==================================
-        // RETURN
+        // RECOVERY INTELLIGENCE
+        // ==================================
+
+        recovery =
+            getRecoveryStatus();
+
+
+        console.log(
+            "?? Recovery status checked"
+        );
+
+
+        // ==================================
+        // FINAL RETURN
         // ==================================
 
         return {
@@ -238,7 +290,7 @@ async function developerPipeline(
                 "Anna OS Developer Pipeline",
 
             version:
-                "0.1.27",
+                "0.1.32",
 
             trigger,
 
@@ -254,6 +306,10 @@ async function developerPipeline(
             proposals,
 
             backup,
+
+            backupValidation,
+
+            recovery,
 
             result
 
@@ -292,7 +348,7 @@ async function developerPipeline(
                 "Anna OS Developer Pipeline",
 
             version:
-                "0.1.27",
+                "0.1.32",
 
             trigger,
 
@@ -302,6 +358,12 @@ async function developerPipeline(
             analysis,
 
             backup:
+                null,
+
+            backupValidation:
+                null,
+
+            recovery:
                 null
 
         };
